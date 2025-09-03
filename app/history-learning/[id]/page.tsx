@@ -191,35 +191,52 @@ export default function HistoryClassDetailPage() {
   return (
     <div className="min-h-screen bg-bg">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/history-learning"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+      <header className="bg-white shadow-sm border-b border-border sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <Link
+                href="/history-learning"
+                className="text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                {classEntry.title}
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                {classEntry.yearRange}
-              </p>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
+                </svg>
+                <span className="hidden sm:inline">Back to Classes</span>
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">
+                  {classEntry.title}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  {classEntry.yearRange}
+                </p>
+              </div>
             </div>
+            <nav className="hidden md:flex items-center gap-6">
+              <Link
+                href="/"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Timeline
+              </Link>
+              <Link
+                href="/history-learning"
+                className="text-primary font-medium border-b-2 border-primary pb-1"
+              >
+                History Learning
+              </Link>
+            </nav>
           </div>
         </div>
       </header>

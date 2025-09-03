@@ -155,16 +155,35 @@ export default function HistoryLearningPage() {
   return (
     <div className="min-h-screen bg-bg w-full">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-border w-full">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <header className="bg-white shadow-sm border-b border-border w-full sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
+              <h1 className="text-2xl font-bold text-foreground">
+                History Learning
+              </h1>
+              <nav className="hidden md:flex items-center gap-6">
+                <Link
+                  href="/"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Timeline
+                </Link>
+                <Link
+                  href="/history-learning"
+                  className="text-primary font-medium border-b-2 border-primary pb-1"
+                >
+                  History Learning
+                </Link>
+              </nav>
+            </div>
+            <div className="flex items-center gap-3">
               <Link
                 href="/"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -176,30 +195,28 @@ export default function HistoryLearningPage() {
                     d="M10 19l-7-7m0 0l7-7m-7 7h18"
                   />
                 </svg>
+                <span className="hidden sm:inline">Back to Timeline</span>
               </Link>
-              <h1 className="text-3xl font-bold text-foreground">
-                History Learning
-              </h1>
-            </div>
-            <button
-              onClick={() => setShowForm(true)}
-              className="bg-primary hover:bg-accent text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              <button
+                onClick={() => setShowForm(true)}
+                className="bg-primary hover:bg-accent text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              Add History Class
-            </button>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                <span className="hidden sm:inline">Add Class</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
