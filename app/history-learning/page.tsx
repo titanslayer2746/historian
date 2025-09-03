@@ -16,6 +16,7 @@ export interface HistoryClassEntry {
   aiDescription?: string;
   correctedFacts?: string;
   keyLearningPoints?: string;
+  chronologicalEvents?: string;
   createdAt: string;
 }
 
@@ -87,6 +88,7 @@ export default function HistoryLearningPage() {
           aiDescription: response.summary || "",
           correctedFacts: response.rewrittenDescription || "",
           keyLearningPoints: response.keyLearningPoints || "",
+          chronologicalEvents: response.chronologicalEvents || "",
         };
 
         setClasses((prev) =>

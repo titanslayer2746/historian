@@ -10,6 +10,7 @@ export interface AIResponse {
   summary?: string;
   rewrittenDescription?: string;
   keyLearningPoints?: string;
+  chronologicalEvents?: string;
   error?: string;
 }
 
@@ -243,6 +244,8 @@ Please provide:
 1. **Corrected and Organized Facts** - List the facts in proper chronological order with any corrections
 2. **Narrative Story** - A smooth, flowing narrative that connects all the facts and explains the historical context
 3. **Key Learning Points** - 3-4 important takeaways for SSC exam preparation
+4. **Chronological Events** - Analyse the events given in the description and create a chronological order of events that are inputted as short notes in below format:
+   year - event title in 4-5 words
 
 Format your response as:
 **Corrected Facts:**
@@ -256,6 +259,11 @@ Format your response as:
 • [Point 2 with highlighting]
 • [Point 3 with highlighting]
 • [Point 4 with highlighting]
+
+**Chronological Events:**
+[Year] - [Event title in 4-5 words]
+[Year] - [Event title in 4-5 words]
+[Year] - [Event title in 4-5 words]
 
 Remember to use the formatting consistently throughout all sections to make important information stand out. Make it engaging, easy to understand, and perfect for SSC exam preparation.`;
 
@@ -281,7 +289,10 @@ Remember to use the formatting consistently throughout all sections to make impo
       /\*\*Narrative Story:\*\*\s*([\s\S]*?)(?=\*\*Key Learning Points:\*\*)/
     );
     const keyLearningPointsMatch = fullResponse.match(
-      /\*\*Key Learning Points:\*\*\s*([\s\S]*?)$/
+      /\*\*Key Learning Points:\*\*\s*([\s\S]*?)(?=\*\*Chronological Events:\*\*)/
+    );
+    const chronologicalEventsMatch = fullResponse.match(
+      /\*\*Chronological Events:\*\*\s*([\s\S]*?)$/
     );
 
     const correctedFacts = correctedFactsMatch
@@ -293,12 +304,16 @@ Remember to use the formatting consistently throughout all sections to make impo
     const keyLearningPoints = keyLearningPointsMatch
       ? keyLearningPointsMatch[1].trim()
       : "";
+    const chronologicalEvents = chronologicalEventsMatch
+      ? chronologicalEventsMatch[1].trim()
+      : "";
 
     return {
       success: true,
       summary: narrativeStory,
       rewrittenDescription: correctedFacts,
       keyLearningPoints: keyLearningPoints,
+      chronologicalEvents: chronologicalEvents,
     };
   } catch (error) {
     console.error("History Learning AI Service Error:", error);

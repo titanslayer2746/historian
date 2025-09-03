@@ -17,11 +17,13 @@ export default function HistoryClassDetailPage() {
     facts: boolean;
     story: boolean;
     learning: boolean;
+    chronological: boolean;
   }>({
     notes: false,
     facts: false,
     story: false,
     learning: false,
+    chronological: false,
   });
 
   useEffect(() => {
@@ -40,6 +42,7 @@ export default function HistoryClassDetailPage() {
           facts: false,
           story: false,
           learning: false,
+          chronological: false,
         });
       } else {
         // Class not found, redirect back
@@ -72,6 +75,7 @@ export default function HistoryClassDetailPage() {
           aiDescription: response.summary || "",
           correctedFacts: response.rewrittenDescription || "",
           keyLearningPoints: response.keyLearningPoints || "",
+          chronologicalEvents: response.chronologicalEvents || "",
         };
 
         // Update localStorage
@@ -94,6 +98,7 @@ export default function HistoryClassDetailPage() {
           facts: false,
           story: false,
           learning: false,
+          chronological: false,
         });
       } else {
         console.error("Failed to generate AI description:", response.error);
@@ -390,6 +395,50 @@ export default function HistoryClassDetailPage() {
                   )}
                 </div>
               )}
+
+              {/* Chronological Events Accordion */}
+              {classEntry.chronologicalEvents && (
+                <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
+                  <button
+                    onClick={() => toggleSection("chronological")}
+                    className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
+                      <span className="text-2xl">📅</span>
+                      Chronological Events
+                    </h2>
+                    <svg
+                      className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
+                        expandedSections.chronological ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                  {expandedSections.chronological && (
+                    <div className="px-6 pb-6">
+                      <div className="bg-purple-50 p-4 rounded-md">
+                        <div
+                          className="text-foreground leading-relaxed"
+                          dangerouslySetInnerHTML={{
+                            __html: formatMarkdown(
+                              classEntry.chronologicalEvents
+                            ),
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           ) : (
             <div className="bg-white rounded-lg shadow-md border border-border p-8 text-center">
@@ -404,7 +453,7 @@ export default function HistoryClassDetailPage() {
               <button
                 onClick={handleGenerateAI}
                 disabled={isGenerating}
-                className="bg-primary hover:bg-accent disabled:bg-muted text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-3 mx-auto"
+                className="bg-primary hover:bg-accent disabled:bg-green-200 text-white disabled:text-gray-600 px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-3 mx-auto"
               >
                 {isGenerating ? (
                   <>
