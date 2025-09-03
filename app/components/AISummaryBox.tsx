@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   AIResponse,
   getCachedOrGenerateSummary,
@@ -25,19 +25,7 @@ export default function AISummaryBox({
   const [aiResponse, setAiResponse] = useState<AIResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (isVisible && !aiResponse) {
-      checkAndGenerateSummary();
-    }
-  }, [isVisible, entry.id]);
-
-  useEffect(() => {
-    if (aiResponse?.rewrittenDescription && onEnhancedDescription) {
-      onEnhancedDescription(aiResponse.rewrittenDescription);
-    }
-  }, [aiResponse?.rewrittenDescription, onEnhancedDescription]);
-
-  const checkAndGenerateSummary = async () => {
+  const checkAndGenerateSummary = useCallback(async () => {
     // First check if summary already exists in localStorage
     if (hasStoredSummary(entry.id)) {
       const storedSummary = getStoredSummary(entry.id);
@@ -58,7 +46,7 @@ export default function AISummaryBox({
         entry.era
       );
       setAiResponse(response);
-    } catch (error) {
+    } catch {
       setAiResponse({
         success: false,
         error: "Failed to generate AI summary",
@@ -66,7 +54,19 @@ export default function AISummaryBox({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [entry.id, entry.title, entry.description, entry.date, entry.era]);
+
+  useEffect(() => {
+    if (isVisible && !aiResponse) {
+      checkAndGenerateSummary();
+    }
+  }, [isVisible, entry.id, aiResponse, checkAndGenerateSummary]);
+
+  useEffect(() => {
+    if (aiResponse?.rewrittenDescription && onEnhancedDescription) {
+      onEnhancedDescription(aiResponse.rewrittenDescription);
+    }
+  }, [aiResponse?.rewrittenDescription, onEnhancedDescription]);
 
   if (!isVisible) return null;
 
