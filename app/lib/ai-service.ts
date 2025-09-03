@@ -9,6 +9,7 @@ export interface AIResponse {
   success: boolean;
   summary?: string;
   rewrittenDescription?: string;
+  keyLearningPoints?: string;
   error?: string;
 }
 
@@ -201,4 +202,109 @@ export function getStoredSummary(entryId: string): AIResponse | null {
 export function hasStoredSummary(entryId: string): boolean {
   const storedSummaries = getStoredSummaries();
   return entryId in storedSummaries;
+}
+
+// New function for history learning AI descriptions
+export async function generateHistoryLearningDescription(
+  title: string,
+  facts: string,
+  yearRange: string
+): Promise<AIResponse> {
+  try {
+    // Check if API key is available
+    if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+      return {
+        success: false,
+        error:
+          "Gemini API key not configured. Please add NEXT_PUBLIC_GEMINI_API_KEY to your environment variables.",
+      };
+    }
+
+    const prompt = `I am preparing for SSC exams. I will provide you with my short notes containing years, dates, events, and facts from history. Your task is to:
+
+1. **Correct any mistakes** if found.
+2. **Arrange the facts** in proper chronological or thematic order.
+3. **Add missing connections** between the points so it becomes a smooth narrative.
+4. **Explain the context and importance** of each event in simple language.
+5. **Present it like a story or flow of events**, not just bullet points, so I can understand the cause–effect and continuity in history.
+6. **IMPORTANT**: Underline and highlight important keywords, dates, names, and concepts throughout your response using markdown formatting:
+   - Use **bold** for key historical figures, important dates, and major events
+   - Use *italic* for significant places, treaties, and important terms
+   - Use \`code blocks\` for years and specific dates
+   - Use ==highlight== for crucial concepts and cause-effect relationships
+   - Use __underline__ for important historical movements and policies
+
+**Class Title:** ${title}
+**Year Range:** ${yearRange}
+**My Notes:**
+${facts}
+
+Please provide:
+1. **Corrected and Organized Facts** - List the facts in proper chronological order with any corrections
+2. **Narrative Story** - A smooth, flowing narrative that connects all the facts and explains the historical context
+3. **Key Learning Points** - 3-4 important takeaways for SSC exam preparation
+
+Format your response as:
+**Corrected Facts:**
+[Chronologically ordered facts with corrections and highlighting]
+
+**Narrative Story:**
+[Your flowing narrative with highlighting]
+
+**Key Learning Points:**
+• [Point 1 with highlighting]
+• [Point 2 with highlighting]
+• [Point 3 with highlighting]
+• [Point 4 with highlighting]
+
+Remember to use the formatting consistently throughout all sections to make important information stand out. Make it engaging, easy to understand, and perfect for SSC exam preparation.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash-exp",
+      contents: prompt,
+    });
+
+    const fullResponse = response.text?.trim();
+
+    if (!fullResponse) {
+      return {
+        success: false,
+        error: "Failed to generate history learning description",
+      };
+    }
+
+    // Parse the response to extract different sections
+    const correctedFactsMatch = fullResponse.match(
+      /\*\*Corrected Facts:\*\*\s*([\s\S]*?)(?=\*\*Narrative Story:\*\*)/
+    );
+    const narrativeStoryMatch = fullResponse.match(
+      /\*\*Narrative Story:\*\*\s*([\s\S]*?)(?=\*\*Key Learning Points:\*\*)/
+    );
+    const keyLearningPointsMatch = fullResponse.match(
+      /\*\*Key Learning Points:\*\*\s*([\s\S]*?)$/
+    );
+
+    const correctedFacts = correctedFactsMatch
+      ? correctedFactsMatch[1].trim()
+      : "";
+    const narrativeStory = narrativeStoryMatch
+      ? narrativeStoryMatch[1].trim()
+      : "";
+    const keyLearningPoints = keyLearningPointsMatch
+      ? keyLearningPointsMatch[1].trim()
+      : "";
+
+    return {
+      success: true,
+      summary: narrativeStory,
+      rewrittenDescription: correctedFacts,
+      keyLearningPoints: keyLearningPoints,
+    };
+  } catch (error) {
+    console.error("History Learning AI Service Error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
 }
