@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { HistoryClassEntry } from "../page";
 import { generateHistoryLearningDescription } from "../../lib/ai-service";
+import ProtectedRoute from "../../components/ProtectedRoute";
 
 export default function HistoryClassDetailPage() {
   const params = useParams();
@@ -189,160 +190,19 @@ export default function HistoryClassDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-border sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <Link
-                href="/history-learning"
-                className="text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+    <ProtectedRoute>
+      <div className="min-h-screen bg-bg">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b border-border sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <Link
+                  href="/history-learning"
+                  className="text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
-                <span className="hidden sm:inline">Back to Classes</span>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">
-                  {classEntry.title}
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  {classEntry.yearRange}
-                </p>
-              </div>
-            </div>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link
-                href="/"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Timeline
-              </Link>
-              <Link
-                href="/history-learning"
-                className="text-primary font-medium border-b-2 border-primary pb-1"
-              >
-                History Learning
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-4">
-          {/* Original Notes Accordion */}
-          <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
-            <button
-              onClick={() => toggleSection("notes")}
-              className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-            >
-              <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
-                <span className="text-2xl">📝</span>
-                Your Notes
-              </h2>
-              <svg
-                className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
-                  expandedSections.notes ? "rotate-180" : ""
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            {expandedSections.notes && (
-              <div className="px-6 pb-6">
-                <div className="bg-muted p-4 rounded-md">
-                  <div
-                    className="text-foreground leading-relaxed"
-                    dangerouslySetInnerHTML={{
-                      __html: formatMarkdown(classEntry.facts),
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* AI Generated Content */}
-          {classEntry.aiDescription ? (
-            <>
-              {/* Organized Facts Accordion */}
-              {classEntry.correctedFacts && (
-                <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
-                  <button
-                    onClick={() => toggleSection("facts")}
-                    className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-                  >
-                    <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
-                      <span className="text-2xl">✅</span>
-                      Organized Facts
-                    </h2>
-                    <svg
-                      className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
-                        expandedSections.facts ? "rotate-180" : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                  {expandedSections.facts && (
-                    <div className="px-6 pb-6">
-                      <div className="bg-soft-green p-4 rounded-md">
-                        <div
-                          className="text-foreground leading-relaxed"
-                          dangerouslySetInnerHTML={{
-                            __html: formatMarkdown(classEntry.correctedFacts),
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Narrative Story Accordion */}
-              <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
-                <button
-                  onClick={() => toggleSection("story")}
-                  className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
-                    <span className="text-2xl">📖</span>
-                    Narrative Story
-                  </h2>
                   <svg
-                    className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
-                      expandedSections.story ? "rotate-180" : ""
-                    }`}
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -351,170 +211,338 @@ export default function HistoryClassDetailPage() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
                     />
                   </svg>
-                </button>
-                {expandedSections.story && (
-                  <div className="px-6 pb-6">
-                    <div className="bg-blue-50 p-4 rounded-md">
-                      <div
-                        className="text-foreground leading-relaxed"
-                        dangerouslySetInnerHTML={{
-                          __html: formatMarkdown(classEntry.aiDescription),
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
+                  <span className="hidden sm:inline">Back to Classes</span>
+                </Link>
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">
+                    {classEntry.title}
+                  </h1>
+                  <p className="text-sm text-muted-foreground">
+                    {classEntry.yearRange}
+                  </p>
+                </div>
               </div>
-
-              {/* Key Learning Points Accordion */}
-              {classEntry.keyLearningPoints && (
-                <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
-                  <button
-                    onClick={() => toggleSection("learning")}
-                    className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+              <nav className="hidden md:flex items-center gap-6">
+                <Link
+                  href="/"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Timeline
+                </Link>
+                <Link
+                  href="/history-learning"
+                  className="text-primary font-medium border-b-2 border-primary pb-1"
+                >
+                  History Learning
+                </Link>
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("historianAccessKey");
+                    document.cookie =
+                      "historianAccessKey=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    window.location.href = "/access";
+                  }}
+                  className="text-gray-600 hover:text-gray-800 transition-colors duration-200 flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100"
+                  title="Logout"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
-                      <span className="text-2xl">🎯</span>
-                      Key Learning Points
-                    </h2>
-                    <svg
-                      className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
-                        expandedSections.learning ? "rotate-180" : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                  {expandedSections.learning && (
-                    <div className="px-6 pb-6">
-                      <div className="bg-yellow-50 p-4 rounded-md">
-                        <div
-                          className="text-foreground leading-relaxed"
-                          dangerouslySetInnerHTML={{
-                            __html: formatMarkdown(
-                              classEntry.keyLearningPoints
-                            ),
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Chronological Events Accordion */}
-              {classEntry.chronologicalEvents && (
-                <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
-                  <button
-                    onClick={() => toggleSection("chronological")}
-                    className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-                  >
-                    <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
-                      <span className="text-2xl">📅</span>
-                      Chronological Events
-                    </h2>
-                    <svg
-                      className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
-                        expandedSections.chronological ? "rotate-180" : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                  {expandedSections.chronological && (
-                    <div className="px-6 pb-6">
-                      <div className="bg-purple-50 p-4 rounded-md">
-                        <div
-                          className="text-foreground leading-relaxed"
-                          dangerouslySetInnerHTML={{
-                            __html: formatMarkdown(
-                              classEntry.chronologicalEvents
-                            ),
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="bg-white rounded-lg shadow-md border border-border p-8 text-center">
-              <div className="text-4xl mb-4">🤖</div>
-              <h2 className="text-2xl font-semibold text-foreground mb-4">
-                Generate AI Description
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                Let AI organize your facts and create a narrative story for
-                better understanding.
-              </p>
-              <button
-                onClick={handleGenerateAI}
-                disabled={isGenerating}
-                className="bg-primary hover:bg-accent disabled:bg-green-200 text-white disabled:text-gray-600 px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-3 mx-auto"
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Generating AI Description...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 10V3L4 14h7v7l9-11h-7z"
-                      />
-                    </svg>
-                    Generate AI Description
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* Footer */}
-          <div className="bg-white rounded-lg shadow-md border border-border p-6">
-            <div className="flex justify-between items-center">
-              <p className="text-muted-foreground">
-                Created: {formatDate(classEntry.createdAt)}
-              </p>
-              <Link
-                href="/history-learning"
-                className="text-primary hover:text-accent font-medium"
-              >
-                ← Back to All Classes
-              </Link>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </nav>
             </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="space-y-4">
+            {/* Original Notes Accordion */}
+            <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
+              <button
+                onClick={() => toggleSection("notes")}
+                className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+              >
+                <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
+                  <span className="text-2xl">📝</span>
+                  Your Notes
+                </h2>
+                <svg
+                  className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
+                    expandedSections.notes ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              {expandedSections.notes && (
+                <div className="px-6 pb-6">
+                  <div className="bg-muted p-4 rounded-md">
+                    <div
+                      className="text-foreground leading-relaxed"
+                      dangerouslySetInnerHTML={{
+                        __html: formatMarkdown(classEntry.facts),
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* AI Generated Content */}
+            {classEntry.aiDescription ? (
+              <>
+                {/* Organized Facts Accordion */}
+                {classEntry.correctedFacts && (
+                  <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
+                    <button
+                      onClick={() => toggleSection("facts")}
+                      className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                    >
+                      <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
+                        <span className="text-2xl">✅</span>
+                        Organized Facts
+                      </h2>
+                      <svg
+                        className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
+                          expandedSections.facts ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {expandedSections.facts && (
+                      <div className="px-6 pb-6">
+                        <div className="bg-soft-green p-4 rounded-md">
+                          <div
+                            className="text-foreground leading-relaxed"
+                            dangerouslySetInnerHTML={{
+                              __html: formatMarkdown(classEntry.correctedFacts),
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Narrative Story Accordion */}
+                <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
+                  <button
+                    onClick={() => toggleSection("story")}
+                    className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
+                      <span className="text-2xl">📖</span>
+                      Narrative Story
+                    </h2>
+                    <svg
+                      className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
+                        expandedSections.story ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                  {expandedSections.story && (
+                    <div className="px-6 pb-6">
+                      <div className="bg-blue-50 p-4 rounded-md">
+                        <div
+                          className="text-foreground leading-relaxed"
+                          dangerouslySetInnerHTML={{
+                            __html: formatMarkdown(classEntry.aiDescription),
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Key Learning Points Accordion */}
+                {classEntry.keyLearningPoints && (
+                  <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
+                    <button
+                      onClick={() => toggleSection("learning")}
+                      className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                    >
+                      <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
+                        <span className="text-2xl">🎯</span>
+                        Key Learning Points
+                      </h2>
+                      <svg
+                        className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
+                          expandedSections.learning ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {expandedSections.learning && (
+                      <div className="px-6 pb-6">
+                        <div className="bg-yellow-50 p-4 rounded-md">
+                          <div
+                            className="text-foreground leading-relaxed"
+                            dangerouslySetInnerHTML={{
+                              __html: formatMarkdown(
+                                classEntry.keyLearningPoints
+                              ),
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Chronological Events Accordion */}
+                {classEntry.chronologicalEvents && (
+                  <div className="bg-white rounded-lg shadow-md border border-border overflow-hidden">
+                    <button
+                      onClick={() => toggleSection("chronological")}
+                      className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                    >
+                      <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
+                        <span className="text-2xl">📅</span>
+                        Chronological Events
+                      </h2>
+                      <svg
+                        className={`w-6 h-6 text-muted-foreground transition-transform duration-200 ${
+                          expandedSections.chronological ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {expandedSections.chronological && (
+                      <div className="px-6 pb-6">
+                        <div className="bg-purple-50 p-4 rounded-md">
+                          <div
+                            className="text-foreground leading-relaxed"
+                            dangerouslySetInnerHTML={{
+                              __html: formatMarkdown(
+                                classEntry.chronologicalEvents
+                              ),
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="bg-white rounded-lg shadow-md border border-border p-8 text-center">
+                <div className="text-4xl mb-4">🤖</div>
+                <h2 className="text-2xl font-semibold text-foreground mb-4">
+                  Generate AI Description
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  Let AI organize your facts and create a narrative story for
+                  better understanding.
+                </p>
+                <button
+                  onClick={handleGenerateAI}
+                  disabled={isGenerating}
+                  className="bg-primary hover:bg-accent disabled:bg-green-200 text-white disabled:text-gray-600 px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-3 mx-auto"
+                >
+                  {isGenerating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Generating AI Description...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                      Generate AI Description
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div className="bg-white rounded-lg shadow-md border border-border p-6">
+              <div className="flex justify-between items-center">
+                <p className="text-muted-foreground">
+                  Created: {formatDate(classEntry.createdAt)}
+                </p>
+                <Link
+                  href="/history-learning"
+                  className="text-primary hover:text-accent font-medium"
+                >
+                  ← Back to All Classes
+                </Link>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </ProtectedRoute>
   );
 }
